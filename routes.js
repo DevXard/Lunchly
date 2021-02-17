@@ -12,9 +12,14 @@ const router = new express.Router();
 router.get("/", async function(req, res, next) {
   try {
     const q = req.query.query
-    console.log(q)
+    if(q !== undefined) {
+      const customers = await Customer.search(q);
+      return res.render("customer_list.html", { customers });
+    }else{
+      
     const customers = await Customer.all();
     return res.render("customer_list.html", { customers });
+    }
   } catch (err) {
     return next(err);
   }

@@ -83,7 +83,19 @@ class Customer {
     return this.firstName = this.firstName + " " + this.lastName
   }
 
-  
+  static async search(q){
+    
+    const results = await db.query(`
+    SELECT id, 
+      first_name AS "firstName",  
+      last_name AS "lastName", 
+      phone, 
+      notes 
+    FROM customers 
+    WHERE first_name ILIKE $1 OR last_name ILIKE $1`,
+   [`%${q}%`])
+   return results.rows.map(c => new Customer(c));
+  }
 }
 
 module.exports = Customer;
