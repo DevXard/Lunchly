@@ -96,6 +96,20 @@ class Customer {
    [`%${q}%`])
    return results.rows.map(c => new Customer(c));
   }
+
+  static async topClients() {
+    const results = await db.query(`
+    SELECT c.id, c.first_name AS "firstName", c.last_name AS "lastName", c.phone, c.notes, COUNT(customer_id) 
+    FROM reservations 
+    LEFT JOIN customers AS c ON reservations.customer_id = c.id  
+    GROUP BY c.id, c.first_name, c.last_name, c.phone, c.notes 
+    ORDER BY COUNT 
+    desc 
+    LIMIT 10
+    `)
+    
+    return results.rows.map(c => new Customer(c));
+  }
 }
 
 module.exports = Customer;
